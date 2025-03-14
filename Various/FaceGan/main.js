@@ -282,7 +282,7 @@ class Person {
         let request;
         if (this.lastPos) this.checkForRaisingHands(this.lastPos);
         if (this.name) {
-            console.log("this is a static person, just locate self");
+            //console.log("this is a static person, just locate self");
             if (!this.imageWithoutMask) return null;
             this.imageWithoutMask.resize(256, 256);
             let imgBase64 = this.imageWithoutMask.canvas.toDataURL("image/jpeg", 1.0);
@@ -313,7 +313,7 @@ class Person {
                 direction: this.raisingHands.left.direction,
                 factor: this.raisingHands.left.amount,
             };
-            console.log("someone is raising hands", postData);
+            //console.log("someone is raising hands", postData);
             url = GPUServer + "latentsToImage/";
             request = { postData: postData, url: url };
         } else if (this.raisingHands.right.raised == true && this.latents) {
@@ -323,7 +323,7 @@ class Person {
                 direction: this.raisingHands.right.direction,
                 factor: this.raisingHands.right.amount,
             };
-            console.log("someone is raising hands", postData);
+            //console.log("someone is raising hands", postData);
             url = GPUServer + "latentsToImage/";
             request = { postData: postData, url: url };
         } else if (closest.distance < width / 2.5 && closest.person.latents && this.latents) {
@@ -361,7 +361,8 @@ class Person {
 
 
     checkForRaisingHands(pose) {
-        //console.log("checking for raising hands", pose.right_wrist.confidence);
+        //console.log("CONFIDENCE", pose.right_wrist.confidence, pose.left_wrist.confidence);
+
         let leftDiff = pose.nose.y - pose.left_wrist.y; //pose.left_wrist.y;
         let rightDiff = pose.nose.y - pose.right_wrist.y; //pose.right_wrist.y;
         //console.log("leftDiff", leftDiff, "rightDiff", rightDiff);
