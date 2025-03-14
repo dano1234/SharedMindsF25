@@ -295,7 +295,7 @@ class Person {
             request = { postData: postData, url: url };
 
         } else if (!this.latents) {
-            console.log("no latents locate self");
+            // console.log("no latents locate self");
             if (!this.imageWithoutMask) return null;
             let imgBase64 = this.imageWithoutMask.canvas.toDataURL("image/jpeg", 1.0);
             imgBase64 = imgBase64.split(",")[1];
@@ -331,7 +331,7 @@ class Person {
             if (!this.latents) return null;
             this.closestPerson = closest.person;
             let percent = Math.min(0.9, Math.max(0.1, 1 - 3 * (Math.abs(closest.distance / width)))); //).toFixed(2);
-            console.log(percent + "someone close enough,find inbetween" + closest.person.name + " num " + closest.person.poseNum);
+            // console.log(percent + "someone close enough,find inbetween" + closest.person.name + " num " + closest.person.poseNum);
 
             postData = {
                 v1: this.latents,
@@ -343,7 +343,7 @@ class Person {
             request = { postData: postData, url: url };
 
         } else {
-            console.log("no one close enough, just locate self");
+            // console.log("no one close enough, just locate self");
             if (!this.imageWithoutMask) return null;
             let imgBase64 = this.imageWithoutMask.canvas.toDataURL("image/jpeg", 1.0);
             imgBase64 = imgBase64.split(",")[1];
@@ -362,9 +362,9 @@ class Person {
 
     checkForRaisingHands(pose) {
         //console.log("checking for raising hands", pose.right_wrist.confidence);
-        let leftDiff = pose.nose.y - pose.left_shoulder.y; //pose.left_wrist.y;
-        let rightDiff = pose.nose.y - pose.right_shoulder.y; //pose.right_wrist.y;
-
+        let leftDiff = pose.nose.y - pose.left_wrist.y; //pose.left_wrist.y;
+        let rightDiff = pose.nose.y - pose.right_wrist.y; //pose.right_wrist.y;
+        //console.log("leftDiff", leftDiff, "rightDiff", rightDiff);
         if (rightDiff > 10) {
             let amount = min(5, this.raisingHands.right.amount + 1);
             this.raisingHands.right.raised = true;
@@ -425,7 +425,7 @@ class Person {
                     currentPerson.dealWithImageFromAI(newImage);
                 });
             } else {
-                console.log("Error in colab");
+                //console.log("Error in colab");
                 setTimeout(readyForRequestFunction, delayBetweenRequests);
 
                 return;
