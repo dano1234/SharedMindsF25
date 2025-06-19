@@ -114,7 +114,6 @@ async function doTurnTaking() {
 
 function bodyPoseVideoResults(poses) {
     globalPoses = poses;
-
     //make a new person if there is a new person posing
     for (let i = people.length - 1; i > - 1; i--) {
         thisPerson = people[i];
