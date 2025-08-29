@@ -1,0 +1,7 @@
+{
+  "name": "shared-minds-f24",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "npx http-server ."
+  }
+}
