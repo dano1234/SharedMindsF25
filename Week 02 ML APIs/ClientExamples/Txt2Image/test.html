@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Replicate Proxy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #response {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Test Replicate Proxy</h1>
+
+    <div class="form-group">
+        <label for="prompt">Prompt:</label>
+        <input type="text" id="prompt" value="A beautiful sunset over mountains">
+    </div>
+
+    <button onclick="makeRequest()">Generate Image</button>
+
+    <div id="response"></div>
+
+    <script>
+        async function makeRequest() {
+            const responseDiv = document.getElementById('response');
+            responseDiv.textContent = 'Sending request...';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/predictions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        version: "db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+                        input: {
+                            prompt: document.getElementById('prompt').value
+                        }
+                    })
+                });
+
+                const data = await response.json();
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+
+                // If we get a prediction ID, start polling for results
+                if (data.id) {
+                    pollPrediction(data.id);
+                }
+            } catch (error) {
+                responseDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+
+        async function pollPrediction(id) {
+            const responseDiv = document.getElementById('response');
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/predictions/${id}`);
+                const data = await response.json();
+
+                responseDiv.textContent = JSON.stringify(data, null, 2);
+
+                if (data.status === 'succeeded') {
+                    // If we have an image URL, display it
+                    if (data.output && data.output[0]) {
+                        const img = document.createElement('img');
+                        img.src = data.output[0];
+                        img.style.maxWidth = '100%';
+                        responseDiv.appendChild(img);
+                    }
+                } else if (data.status === 'failed') {
+                    responseDiv.textContent += '\nGeneration failed: ' + data.error;
+                } else {
+                    // If still processing, poll again after 1 second
+                    setTimeout(() => pollPrediction(id), 1000);
+                }
+            } catch (error) {
+                responseDiv.textContent += '\nError polling: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>
