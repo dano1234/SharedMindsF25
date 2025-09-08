@@ -1,5 +1,4 @@
-//let googleAuthToken = localStorage.getItem('itp-ima-replicate-proxy-ok');
-let googleAuthToken = "";
+
 let feedback;
 let img;
 
@@ -59,41 +58,36 @@ function draw() {
 
 
 async function askForPicture(p_prompt) {
+    const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+    let authToken = "";
     //const replicateProxy = "https://replicateproxy-tc5vweqxmq-uc.a.run.app/create_n_get";
-    const replicateProxy = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
+    //const replicateProxy = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
 
     let data = {
         model: "black-forest-labs/flux-schnell",
-        //version: "db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
-        //version: "stability-ai/sdxl",
         input: {
             prompt: p_prompt,
         },
     };
-
-
     let fetchOptions = {
         method: "POST",
 
         headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${googleAuthToken}`,
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
     console.log("data", fetchOptions, "url", replicateProxy);
-    try {
-        feedback.html("Generating image...");
-        const response = await fetch(replicateProxy, fetchOptions);
-        const prediction = await response.json();
-        console.log("prediction", prediction);
-        loadImage(prediction.output[0], (incomingImage) => {
-            img = incomingImage;
-            feedback.html("Image generated!");
-        });
 
-    } catch (error) {
-        feedback.html("Error: " + error.message);
-        console.error("Error:", error);
-    }
+    feedback.html("Generating ...");
+    const response = await fetch(replicateProxy, fetchOptions);
+    const prediction = await response.json();
+    console.log("do somethign with this", prediction);
+    loadImage(prediction.output[0], (incomingImage) => {
+        img = incomingImage;
+        feedback.html("Image generated!");
+    });
+
+
 }

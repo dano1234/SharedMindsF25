@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.1/p5.js"></script>
+    <title>Replicate API Test</title>
+</head>
+
+<body>
+    <h1>Replicate API (via Node Proxy)</h1>
+    <div id="instructions">By typing in the box on the left and hitting return, you can prompt a text to image Stable
+        Diffusion model.
+        By typing in the box on the right and hitting return, you can prompt a text to text ChatGPT model.</div>
+
+    <br>
+    <div id="text_container">
+        <div id="resulting_text"></div>
+    </div>
+    <div id="image_container">
+        <div id="resulting_image"></div>
+    </div>
+    <script src="sketch.js"></script>
+</body>
+
+</html>

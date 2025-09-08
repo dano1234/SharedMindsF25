@@ -1,0 +1,55 @@
+<html>
+
+<body>
+  <!-- ... Your HTML and CSS -->
+  <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+    </script>
+  <script type="module">
+    import { GoogleGenerativeAI } from "@google/generative-ai";
+    //import { GoogleGenerativeAI } from 'https://esm.run/@google/generative-ai'
+    // Fetch your API_KEY
+    const API_KEY = "AIzaSyBwpIh4hEnpu-VzOFF44dqyOBp71SyRqGM";
+
+    // Access your API key (see "Set up your API key" above)
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    // ...
+
+    let input = document.createElement("input");
+    input.type = "text";
+    input.id = "prompt";
+    input.style.width = "50%";
+    input.value = "Write a story about a magic backpack.";
+    document.body.appendChild(input);
+    let output = document.createElement("div");
+    output.id = "output";
+    document.body.appendChild(output);
+    input.addEventListener("keydown", async () => {
+      if (event.key == "Enter") {
+        const prompt = input.value;
+        const model = genAI.getGenerativeModel({ model: "models/gemini-pro" });
+        console.log("model", model);
+        const result = await model.generateContent(prompt);
+        console.log("result", result);
+        const response = await result.response;
+        const text = response.text();
+        console.log(text);
+        output.innerHTML = text;
+      }
+    });
+
+
+
+
+
+
+
+  </script>
+</body>
+
+</html>
