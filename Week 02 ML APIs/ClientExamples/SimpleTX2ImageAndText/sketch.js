@@ -1,4 +1,4 @@
-const replicateProxy = "https://replicate-api-proxy.glitch.me"
+const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get"
 
 
 //////This is all vanilla javascript, no p5.js form making two fields and a listener for when the user hits enter

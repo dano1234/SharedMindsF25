@@ -26,15 +26,10 @@ function draw() {
 }
 
 async function askForPicture(p_prompt) {
-  const replicateProxy = "https://replicateproxy-tc5vweqxmq-uc.a.run.app/create_n_get";
-  //30const replicateProxy = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
-
-
+  let authToken = "eyJhbGciOiJSUzI1NiIsImtpZCI6ImUzZWU3ZTAyOGUzODg1YTM0NWNlMDcwNTVmODQ2ODYyMjU1YTcwNDYiLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiRGFuIE8nU3VsbGl2YW4iLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDMuZ29vZ2xldXNlcmNvbnRlbnQuY29tL2EvQUNnOG9jSmhrcTc0NjBZNzNWSWNTdk9QdlVhYnJhVmdmS2RHTENnMWJkTHlNaDdwTDc1LVJtUno9czk2LWMiLCJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vaXRwLWltYS1yZXBsaWNhdGUtcHJveHkiLCJhdWQiOiJpdHAtaW1hLXJlcGxpY2F0ZS1wcm94eSIsImF1dGhfdGltZSI6MTc1NzM2MjUwNywidXNlcl9pZCI6IkN0VDlRc2ZySnFQc3doR29zTDZ6QWEyVFhTWTIiLCJzdWIiOiJDdFQ5UXNmckpxUHN3aEdvc0w2ekFhMlRYU1kyIiwiaWF0IjoxNzU3MzYyNTA3LCJleHAiOjE3NTczNjYxMDcsImVtYWlsIjoiZGJvM0BueXUuZWR1IiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImZpcmViYXNlIjp7ImlkZW50aXRpZXMiOnsiZ29vZ2xlLmNvbSI6WyIxMDA5Njk1NjkyMjY5NDIyMjQ0NjciXSwiZW1haWwiOlsiZGJvM0BueXUuZWR1Il19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.d8Fqk2c6eEDvzoWX5Hu9_-JnYOIq6CzmK-X1oZwqmiUf4AW1GePo3o_5SBPRDF412bdM6MePA-QkON5Y_4uB0Ev418PM9nWCdaIivGsp86k2s08rtIrT1GZNKzFkc9QdIPrYk3RiH6-7iF8c9ozjF7hqil75fbegNiKY3dyqnDwq_AtXuqeC6LH0jHxR6GcqXBxxXWapTEsp7z3GISXhMoBAAVN5UNHsHUl-hQj4XyFy3I8J_YadsCARj2xZcFanYn46o3g_SkZGJA2p7IeRfUKgHN3KUQlHmVozJZGMcv4N-dDwOjHBbKCXVna0feEWr6qPl6NTu6cLFXNDcIKpYQ";
+  const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
   let data = {
-    version: "stability-ai/stable-diffusion:b3d14e1cd1f9470bbb0bb68cac48e5f483e5be309551992cc33dc30654a82bb7",
-    //model: "stability-ai/stable-diffusion-inpainting:c2172c447eb69551b59f62fd2d61dd84054e9fb7bc8a42fbe398c2a7a072ed68",
-    //model: "black-forest-labs/flux-schnell",
-    //version: "db21e45d3f7023abc2a46ee38a23973f6dce16bb082a930b0c49861f96d1e5bf",
+    model: "ideogram-ai/ideogram-v3-turbo",
     input: {
       prompt: p_prompt,
     },
@@ -45,6 +40,7 @@ async function askForPicture(p_prompt) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'Authorization': `Bearer ${authToken}`,
     },
     body: JSON.stringify(data),
   };
@@ -55,7 +51,7 @@ async function askForPicture(p_prompt) {
 
     const prediction = await response.json();
     console.log("prediction", prediction);
-    loadImage(prediction.output[0], (incomingImage) => {
+    loadImage(prediction.output, (incomingImage) => {
       img = incomingImage;
       feedback.html("Image generated!");
     });

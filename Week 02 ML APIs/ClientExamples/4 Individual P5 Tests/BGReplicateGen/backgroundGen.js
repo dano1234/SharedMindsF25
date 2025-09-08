@@ -2,7 +2,7 @@
 let camera3D, scene, renderer, cube;
 let dir = 1;
 let panoTexture, textureCtx;
-const replicateProxy = "https://replicate-api-proxy.glitch.me"
+const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get"
 
 init3D();
 

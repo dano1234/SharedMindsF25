@@ -50,15 +50,16 @@ function animate() {
 
 
 async function askPictures(prompt, location) {
+    let authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     document.body.style.cursor = "progress";
     let maskBase64 = mask.toDataURL();
     let imageBase64 = canvas.toDataURL();
     const data = {
-        version: "8beff3369e81422112d93b89ca01426147de542cd4684c244b673b105188fe5f",
-        //version: "7762fd07cf82c948538e41f63f77d685e02b063e37e496e96eefd46c929f9bdc95b7223104132402a9ae91cc677285bc5eb997834bd2349fa486f53910fd68b3",   //stable diffusion
+        model: "black-forest-labs/flux-fill-dev",
         input: {
             prompt: prompt,
-            prompt_strength: 0.8,
+            output_format: "png",
             mask: maskBase64,
             image: imageBase64,
         },
@@ -69,11 +70,12 @@ async function askPictures(prompt, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: 'application/json',
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
 
-    const picture_info = await fetch(url, options);
+    const picture_info = await fetch(replicateProxy, options);
     console.log("picture_response", picture_info);
     const proxy_said = await picture_info.json();
     console.log("proxy_said", proxy_said);

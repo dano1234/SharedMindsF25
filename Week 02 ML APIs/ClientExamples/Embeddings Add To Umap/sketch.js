@@ -3,7 +3,7 @@
 //https://replicateproxy-tc5vweqxmq-uc.a.run.app
 //const replicateProxy = "https://replicateproxy-tc5vweqxmq-uc.a.run.app/predictions";
 //const replicateProxy = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
-const replicateProxy = "https://replicateproxy-tc5vweqxmq-uc.a.run.app/create_n_get";
+const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
 
 let words = []
 let umap;

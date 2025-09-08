@@ -1,6 +1,4 @@
 
-const replicateProxy = "https://replicateproxy-tc5vweqxmq-uc.a.run.app/create_n_get";
-//const replicateProxy = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
 let img;
 let feedback;
 
@@ -20,16 +18,18 @@ function draw() {
 
 async function askWithAudio(audio) {
   document.body.style.cursor = "progress";
-
+  let authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+  const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
   const b64Audio = await convertBlobToBase64(audio);
   feedback.html("Waiting for reply from Replicate Audio...");
 
   let data = {
     fieldToConvertBase64ToURL: "audio",
     fileFormat: "wav",
-    version: "3ab86df6c8f54c11309d4d1f930ac292bad43ace52d10c80d87eb258b3c9f79c",
+    version: "vaibhavs10/incredibly-fast-whisper:3ab86df6c8f54c11309d4d1f930ac292bad43ace52d10c80d87eb258b3c9f79c",
     input: {
       audio: b64Audio,
+
     },
   };
   console.log(data);
@@ -38,6 +38,7 @@ async function askWithAudio(audio) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      'Authorization': `Bearer ${authToken}`,
       Accept: "application/json",
     },
     body: JSON.stringify(data),
