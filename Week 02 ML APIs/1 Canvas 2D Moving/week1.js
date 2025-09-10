@@ -38,7 +38,9 @@ function drawWord(word) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.font = '30px Arial';
     ctx.fillStyle = 'black';
-    ctx.fillText(word, 10, 50);
+    ctx.fillText(word, inputLocationX, inputLocationY);
+    inputBoxDirectionX = 1;
+    inputBoxDirectionY = 1;
 }
 
 function initInterface() {
@@ -75,7 +77,7 @@ function initInterface() {
 
         if (event.key === 'Enter') {
             const inputValue = inputBox.value;
-            drawWord(inputValue);
+            drawWord(inputValue, inputLocationX, inputLocationY);
         }
     });
 
