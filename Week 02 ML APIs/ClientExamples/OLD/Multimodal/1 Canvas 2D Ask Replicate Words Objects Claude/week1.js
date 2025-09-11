@@ -5,7 +5,7 @@ let inputLocationY = window.innerHeight / 2;
 let canvas;
 let ctx;
 let inputBox;
-const url = "https://replicate-api-proxy.glitch.me/create_n_get/";
+
 let responseWords = [];
 let promptWords = [];
 let mouseDown = false;
@@ -53,22 +53,22 @@ function animate() {
 
 
 async function askWord(promptWord, location) {
+    let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+    let authToken = "";
+    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
     let thisPromptWord = {
         word: promptWord,
         location: location,
     }
     promptWords.push(thisPromptWord);
-    let prompt = "a json list of 5 words related to " + promptWord + " with no extra words or punctuation";
+    let prompt = "a 5 words json list related to " + promptWord + " with no extra words of explanation or punctuation. make sure the response contains only 5 words";
     document.body.style.cursor = "progress";
     const data = {
-        //mistral "cf18decbf51c27fed6bbdc3492312c1c903222a56e3fe9ca02d6cbe5198afc10",
-        //llama  "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48"
-        //"version": "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48",
-        modelURL: "https://api.replicate.com/v1/models/meta/meta-llama-3-70b-instruct/predictions",
+        model: "anthropic/claude-4-sonnet",
         input: {
-            prompt: prompt,
-            max_tokens: 100,
-            max_length: 100,
+            prompt: prompt
+
         },
     };
     console.log("Making a Fetch Request", data);
@@ -77,14 +77,23 @@ async function askWord(promptWord, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: 'application/json',
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
-    const raw_response = await fetch(url, options);
+    const raw_response = await fetch(replicateProxy, options);
     //turn it into json
     const json_response = await raw_response.json();
     document.body.style.cursor = "auto";
-    let textResponse = json_response.output.join("").trim();
+    console.log("json_response", json_response);
+
+    let textResponse = "";
+    for (let i = 0; i < json_response.output.length; i++) {
+
+
+        textResponse += json_response.output[i];
+    }
+    console.log("allResponses", textResponse);
     let textResponseJSON = JSON.parse(textResponse);
     let angleIncrements = 2 * Math.PI / textResponseJSON.length;
     let radius = 100;

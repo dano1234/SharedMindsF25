@@ -6,7 +6,6 @@ let inputBoxDirectionY = 1;
 
 let canvas;
 let inputBox;
-const url = "https://replicate-api-proxy.glitch.me/create_n_get/";
 
 init();
 
@@ -37,7 +36,9 @@ function animate() {
 async function askPictures(prompt, location) {
     document.body.style.cursor = "progress";
     const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
-    let authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
+    const authToken = "";
+    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
     const data = {
         //mistral "cf18decbf51c27fed6bbdc3492312c1c903222a56e3fe9ca02d6cbe5198afc10",
         //llama  "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48"

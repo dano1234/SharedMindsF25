@@ -19,12 +19,13 @@ async function askForSound(p_prompt) {
     //const imageDiv = select("#resulting_image");
     //imageDiv.html("Waiting for reply from Replicate's API...");
     const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get"
-    const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    const authToken = "";
+    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
     let data = {
-        //replicate / riffusion / riffusion
-        "version": "8cf61ea6c56afd61d8f5b9ffd14d7c216c0a93844ce2d82ac1c9ecc9c7f24e05",
+        "version": "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",
         input: {
-            "prompt_a": p_prompt,
+            "prompt": p_prompt,
         },
     };
     console.log("Asking for Sound Info From Replicate via Proxy", data);
@@ -37,12 +38,12 @@ async function askForSound(p_prompt) {
     };
 
     console.log("url", replicateProxy, "options", options);
-    const picture_info = await fetch(replicateProxy, options);
+    const response = await fetch(replicateProxy, options);
     //console.log("picture_response", picture_info);
-    const proxy_said = await picture_info.json();
-    console.log("proxy_said", proxy_said.output.audio);
+    const jsonResponse = await response.json();
+    console.log("jsonResponse", jsonResponse.output);
     const ctx = new AudioContext();
-    let incomingData = await fetch(proxy_said.output.audio);
+    let incomingData = await fetch(jsonResponse.output);
     let arrayBuffer = await incomingData.arrayBuffer();
     let decodedAudio = await ctx.decodeAudioData(arrayBuffer);
     const playSound = ctx.createBufferSource();
@@ -50,6 +51,7 @@ async function askForSound(p_prompt) {
     playSound.connect(ctx.destination);
     playSound.start(ctx.currentTime);
 
-    playSound.loop = true;
+    //playSound.loop = true;
 
 }
+
