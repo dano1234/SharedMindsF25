@@ -6,7 +6,7 @@ let inputBoxDirectionY = 1;
 
 let canvas;
 let inputBox;
-const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+
 
 init();
 
@@ -44,6 +44,11 @@ function drawWord(response, location) {
 
 
 async function askWord(word, location) {
+    const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+    //Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
+    const authToken = "";
+    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+
     let prompt = "a json list of 5 words related to " + word + " with no extra words or punctuation";
     document.body.style.cursor = "progress";
     const data = {
@@ -58,6 +63,7 @@ async function askWord(word, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: 'application/json',
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };

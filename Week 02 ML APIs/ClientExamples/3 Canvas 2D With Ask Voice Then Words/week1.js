@@ -51,7 +51,13 @@ function drawWord(response, location) {
 async function askVoiceThenWord(audio, location) {
     const b64Audio = await convertBlobToBase64(audio);
     const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+    //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
+    const authToken = "";
+    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+
+
     let data = {
+        //proxy will convert this base64 audio to a url
         fieldToConvertBase64ToURL: "audio",
         fileFormat: "wav",
         version: "vaibhavs10/incredibly-fast-whisper:3ab86df6c8f54c11309d4d1f930ac292bad43ace52d10c80d87eb258b3c9f79c",
@@ -65,6 +71,7 @@ async function askVoiceThenWord(audio, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
@@ -88,6 +95,7 @@ async function askVoiceThenWord(audio, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: 'application/json',
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
