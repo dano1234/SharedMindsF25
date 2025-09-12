@@ -36,7 +36,6 @@ async function askPictures(promptWord, location) {
     document.body.style.cursor = "progress";
     let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     let authToken = "";
-    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
     //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
     let thisPromptWord = {
         word: promptWord,

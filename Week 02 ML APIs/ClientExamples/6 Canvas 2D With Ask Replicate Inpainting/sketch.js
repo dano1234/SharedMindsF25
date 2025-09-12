@@ -1,15 +1,11 @@
 
-let inputLocationX = window.innerWidth / 2;
-let inputLocationY = window.innerHeight / 2;
-let inputBoxDirectionX = 1;
-let inputBoxDirectionY = 1;
+
 
 let canvasDimension = 1024;
 let canvas;
 let mask;
 let inputBox;
 
-const url = "https://replicate-api-proxy.glitch.me/create_n_get/";
 let mouseDown = false;
 
 init();
@@ -33,24 +29,14 @@ function init() {
 // Animate loop
 function animate() {
     // Perform animation logic here
-    inputLocationX = inputLocationX + inputBoxDirectionX;
-    inputLocationY = inputLocationY + inputBoxDirectionY;
-    if (inputLocationX > window.innerWidth || inputLocationX < 0) {
-        inputBoxDirectionX = - inputBoxDirectionX;
-    }
-    if (inputLocationY > window.innerHeight || inputLocationY < 0) {
-        inputBoxDirectionY = - inputBoxDirectionY;
-    }
 
-    inputBox.style.left = inputLocationX + 'px';
-    inputBox.style.top = inputLocationY + 'px';
     requestAnimationFrame(animate);
 }
 
 
 
-async function askPictures(prompt, location) {
-    let authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+async function askPictures(prompt) {
+    let authToken = "";
     let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     document.body.style.cursor = "progress";
     let maskBase64 = mask.toDataURL();
@@ -105,8 +91,7 @@ async function askPictures(prompt, location) {
     document.body.style.cursor = "auto";
     let maskCtx = mask.getContext('2d');
     maskCtx.clearRect(0, 0, mask.width, mask.height);
-    inputBoxDirectionX = 1;
-    inputBoxDirectionY = 1;
+
 }
 
 //maskCtx.clearRect(0, 0, mask.width, mask.height);
@@ -162,7 +147,7 @@ function initInterface() {
         if (event.key === 'Enter') {
             const inputValue = inputBox.value;
             //askWord(inputValue, { x: inputLocationX, y: inputLocationY });
-            askPictures(inputValue, { x: inputLocationX, y: inputLocationY });
+            askPictures(inputValue);
 
         }
     });
@@ -198,8 +183,7 @@ function initInterface() {
     });
     mask.addEventListener('mousedown', () => {
         mouseDown = true;
-        inputBoxDirectionX = 0;
-        inputBoxDirectionY = 0;
+
     });
 }
 

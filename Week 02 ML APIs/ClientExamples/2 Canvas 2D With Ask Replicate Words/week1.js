@@ -46,8 +46,7 @@ function drawWord(response, location) {
 async function askWord(word, location) {
     const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     //Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
-    const authToken = "";
-    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
+    let authToken = "";
 
     let prompt = "a json list of 5 words related to " + word + " with no extra words or punctuation";
     document.body.style.cursor = "progress";

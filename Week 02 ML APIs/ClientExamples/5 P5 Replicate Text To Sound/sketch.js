@@ -20,7 +20,6 @@ async function askForSound(p_prompt) {
     //imageDiv.html("Waiting for reply from Replicate's API...");
     const replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get"
     const authToken = "";
-    //... or const authToken = localStorage.getItem("itp-ima-replicate-proxy-ok");
     //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
     let data = {
         "version": "meta/musicgen:671ac645ce5e552cc63a54a2bbff63fcf798043055d2dac5fc9e36a837eedcfb",

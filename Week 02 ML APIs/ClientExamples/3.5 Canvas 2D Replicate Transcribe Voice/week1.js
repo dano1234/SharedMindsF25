@@ -50,6 +50,7 @@ function drawWord(response, location) {
 
 async function askVoiceThenWord(audio, location) {
     const b64Audio = await convertBlobToBase64(audio);
+    //let url = "http://127.0.0.1:5002/itp-ima-replicate-proxy/us-central1/replicateProxy/create_n_get";
     const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     //Optionally Get Auth Token from: https://itp-ima-replicate-proxy.web.app/
     const authToken = "";
@@ -78,43 +79,9 @@ async function askVoiceThenWord(audio, location) {
     console.log("audio_response", response_json);
     word = response_json.output.text;
     console.log("word", word);
-    let prompt = "a json list of 5 words related to " + word + "with no extra words or punctuation";
-    document.body.style.cursor = "progress";
-    document.body.style.cursor = "progress";
-    data = {
-        model: "openai/gpt-5",
-        input: {
-            prompt: prompt,
-        },
-    };
-    console.log("Making a Fetch Request", data);
-    options = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            Accept: 'application/json',
-            'Authorization': `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(data),
-    };
-    const raw_response = await fetch(url, options);
-    //turn it into json
-    const json_response = await raw_response.json();
-    console.log("json_response", json_response);
-    document.body.style.cursor = "auto";
-    let parsedResponse = JSON.parse(json_response.output.join(""));
-    let responseCount = parsedResponse.length;
-    let orbit = { x: 0, y: 0 };
-    for (let i = 0; i < responseCount; i++) {
-        let textResponse = parsedResponse[i];
-        let radius = 100;
-        orbit.x = location.x + radius * Math.cos(i * 2 * Math.PI / responseCount);
-        orbit.y = location.y + radius * Math.sin(i * 2 * Math.PI / responseCount);
-        drawWord(textResponse, orbit);
-    }
+    drawWord(word, location);
     inputBoxDirectionX = 1;
     inputBoxDirectionY = 1;
-
 }
 
 function initInterface() {
