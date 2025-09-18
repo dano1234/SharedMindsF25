@@ -32,7 +32,7 @@ function animate() {
 
 
 async function askPictures(promptWord, location) {
-
+    inputBox.value = 'Asking for ' + promptWord;
     document.body.style.cursor = "progress";
     let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
     let authToken = "";
@@ -85,6 +85,8 @@ async function askPictures(promptWord, location) {
     document.body.style.cursor = "auto";
     inputBoxDirectionX = 1;
     inputBoxDirectionY = 1;
+    inputBox.style.display = 'block';
+    inputBox.value = '';
 }
 
 
@@ -129,7 +131,7 @@ function initInterface() {
             let location = { x: rect.left, y: rect.top };
             console.log("Location: ", location);
             askPictures(inputValue, location);
-            inputBox.style.display = 'none';
+            //inputBox.style.display = 'none';
         }
     });
 
