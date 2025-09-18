@@ -41,6 +41,7 @@ async function ask() {
 
   canvas.loadPixels();
   let imgBase64 = canvas.elt.toDataURL();
+  //console.log("imgBase64", imgBase64);
 
   let postData = {
     model: "google/nano-banana",
