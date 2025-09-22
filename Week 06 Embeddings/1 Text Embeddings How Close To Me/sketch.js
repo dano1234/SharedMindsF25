@@ -89,7 +89,7 @@ function createInterface() {
     othersInput.type = 'text';
     othersInput.id = 'othersInput';
     othersInput.placeholder = 'Others';
-    othersInput.value = "cat on a leash, jogging, walnuts, apples, jumping jacks"; // Pre-populate others
+    othersInput.value = "apples, walnuts, jumping jacks, listening to music, eating lunch, kissing your friend, jogging, cat on a leash, smoking a joint"; // Pre-populate others
     othersInput.style.flex = '5'; // Assign 5 parts of the space
     inputContainer.appendChild(othersInput);
 
