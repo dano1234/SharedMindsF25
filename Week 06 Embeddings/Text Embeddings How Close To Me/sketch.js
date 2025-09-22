@@ -21,7 +21,7 @@ function handleCanvasClick(event) {
     for (const key in all) {
         if (all[key] && all[key].x && all[key].y) {
             const wordData = all[key];
-            const dist = Math.sqrt((clickX - wordData.x)**2 + (clickY - wordData.y)**2);
+            const dist = Math.sqrt((clickX - wordData.x) ** 2 + (clickY - wordData.y) ** 2);
 
             if (dist < 20) { // 20px radius for clicking
                 clickedKey = key;
@@ -36,10 +36,10 @@ function handleCanvasClick(event) {
 
         const oldAnchor = anchor;
         let othersArray = othersInput.value.split(',').map(s => s.trim()).filter(Boolean);
-        
+
         // Remove the new anchor from the 'others' list
         othersArray = othersArray.filter(o => o !== clickedKey);
-        
+
         // Add the old anchor to the 'others' list
         if (oldAnchor) {
             othersArray.push(oldAnchor);
@@ -163,15 +163,15 @@ async function getEmbeddings() {
     try {
         const raw_response = await fetch(url, options);
         const json_response = await raw_response.json();
-        
+
         if (json_response.error) {
             throw new Error(json_response.error);
         }
 
         const embeddings = json_response.output;
-        
+
         if (!embeddings || embeddings.length !== allKeys.length) {
-             throw new Error("Mismatch between number of texts and number of embeddings returned.");
+            throw new Error("Mismatch between number of texts and number of embeddings returned.");
         }
 
         allKeys.forEach((key, i) => {
@@ -257,10 +257,10 @@ function displayEmbeddings() {
             const normalized = (result.similarity - minSimilarity) / (maxSimilarity - minSimilarity);
             yPos = yStart + (1 - normalized) * yRange;
         }
-        
+
         const xPos = canvas.width / 2;
         ctx.fillText(result.key, xPos, yPos);
-        
+
         // Store the coordinates for click detection
         if (all[result.key]) {
             all[result.key].x = xPos;
@@ -274,3 +274,4 @@ function animate() {
     // animation logic goes here
     // Note: The main drawing now happens in displayEmbeddings()
 }
+//okay
