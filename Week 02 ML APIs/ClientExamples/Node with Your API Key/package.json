@@ -1,0 +1,21 @@
+{
+    "name": "node-with-your-api-key",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Node version of '4 Canvas 2D With Ask Replicate Pictures' using Replicate SDK.",
+    "main": "main.js",
+    "type": "module",
+    "scripts": {
+        "cli": "node index.js",
+        "start": "electron .",
+        "dev": "electron .",
+        "generate": "node index.js --prompt \"A student trying to learn how use a machine learning API\""
+    },
+    "dependencies": {
+        "dotenv": "^16.4.5",
+        "replicate": "^0.32.1"
+    },
+    "devDependencies": {
+        "electron": "^30.0.9"
+    }
+}
