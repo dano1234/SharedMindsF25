@@ -8,7 +8,52 @@ function init() {
     createInterface();
     resetAndGetEmbeddings(); // Automatically run on load
     animate();
+    document.addEventListener('mousedown', handleCanvasClick);
 }
+
+function handleCanvasClick(event) {
+    const clickX = event.clientX;
+    const clickY = event.clientY;
+
+    let clickedKey = null;
+
+    // Check if the click is near any of the words
+    for (const key in all) {
+        if (all[key] && all[key].x && all[key].y) {
+            const wordData = all[key];
+            const dist = Math.sqrt((clickX - wordData.x)**2 + (clickY - wordData.y)**2);
+
+            if (dist < 20) { // 20px radius for clicking
+                clickedKey = key;
+                break;
+            }
+        }
+    }
+
+    // If a word was clicked and it's not the current anchor, make it the new anchor
+    if (clickedKey && clickedKey !== anchor) {
+        console.log("New anchor:", clickedKey);
+
+        const oldAnchor = anchor;
+        let othersArray = othersInput.value.split(',').map(s => s.trim()).filter(Boolean);
+        
+        // Remove the new anchor from the 'others' list
+        othersArray = othersArray.filter(o => o !== clickedKey);
+        
+        // Add the old anchor to the 'others' list
+        if (oldAnchor) {
+            othersArray.push(oldAnchor);
+        }
+
+        // Update the input fields
+        anchorInput.value = clickedKey;
+        othersInput.value = othersArray.join(', ');
+
+        // Rerun the whole process
+        resetAndGetEmbeddings();
+    }
+}
+
 
 function createInterface() {
 
@@ -72,13 +117,13 @@ function resetAndGetEmbeddings() {
     all = {};
     anchor = anchorInput.value.trim();
     if (anchor) {
-        all[anchor] = null;
+        all[anchor] = {}; // Initialize as an object to hold embedding and coordinates
     }
 
     const others = othersInput.value.trim().split(',').filter(word => word.trim() !== '');
     for (const other of others) {
         const key = other.trim();
-        all[key] = null;
+        all[key] = {}; // Initialize as an object
     }
 
     getEmbeddings();
@@ -130,7 +175,9 @@ async function getEmbeddings() {
         }
 
         allKeys.forEach((key, i) => {
-            all[key] = embeddings[i];
+            if (all[key]) {
+                all[key].embedding = embeddings[i]; // Store the embedding
+            }
         });
 
     } catch (error) {
@@ -159,29 +206,35 @@ function displayEmbeddings() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     container.innerHTML = ''; // Clear the container that held the HTML results
 
-    if (!anchor || !all[anchor]) {
+    if (!anchor || !all[anchor] || !all[anchor].embedding) {
         return;
     }
 
-    const anchorEmbedding = all[anchor];
+    const anchorEmbedding = all[anchor].embedding;
 
     // 1. Calculate all similarities first to find the min and max
     const results = [];
     for (const key in all) {
         if (key === anchor) continue;
-        if (!all[key]) continue; // Skip if embedding is missing
+        if (!all[key] || !all[key].embedding) continue; // Skip if embedding is missing
 
-        const otherEmbedding = all[key];
+        const otherEmbedding = all[key].embedding;
         const similarity = cosineSimilarity(anchorEmbedding, otherEmbedding);
         results.push({ key, similarity });
     }
 
+    ctx.fillStyle = 'black';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+
+    // Draw anchor text and store its position
+    const anchorX = canvas.width / 2;
+    const anchorY = 100;
+    ctx.fillText(anchor, anchorX, anchorY);
+    all[anchor].x = anchorX;
+    all[anchor].y = anchorY;
+
     if (results.length === 0) {
-        // just draw anchor if no other words
-        ctx.fillStyle = 'black';
-        ctx.font = '16px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(anchor, canvas.width / 2, 100);
         return;
     }
 
@@ -189,13 +242,6 @@ function displayEmbeddings() {
     const similarities = results.map(r => r.similarity);
     const minSimilarity = Math.min(...similarities);
     const maxSimilarity = Math.max(...similarities);
-
-    ctx.fillStyle = 'black';
-    ctx.font = '16px Arial';
-    ctx.textAlign = 'center';
-
-    // Draw anchor text
-    ctx.fillText(anchor, canvas.width / 2, 100);
 
     const yStart = 150; // Where the drawing of results starts
     const yEnd = canvas.height - 50; // Where it ends
@@ -205,20 +251,21 @@ function displayEmbeddings() {
     for (const result of results) {
         let yPos;
 
-        // Handle case where all similarities are the same to avoid division by zero
         if (maxSimilarity - minSimilarity === 0) {
             yPos = yStart + yRange / 2;
         } else {
-            // Normalize the similarity to a 0-1 range
-            // We want high similarity to be close to the anchor (higher on screen)
-            // So we want to map [minSimilarity, maxSimilarity] to [yEnd, yStart]
             const normalized = (result.similarity - minSimilarity) / (maxSimilarity - minSimilarity);
-            // Invert the normalized value and scale to the yRange
             yPos = yStart + (1 - normalized) * yRange;
         }
         
         const xPos = canvas.width / 2;
         ctx.fillText(result.key, xPos, yPos);
+        
+        // Store the coordinates for click detection
+        if (all[result.key]) {
+            all[result.key].x = xPos;
+            all[result.key].y = yPos;
+        }
     }
 }
 
