@@ -38,15 +38,20 @@
     </div>
     <div id="error"></div>
     <canvas id="canvas" width="1024" height="1024" style="margin-top:16px; border:1px solid #ccc"></canvas>
+    <video id="video" width="1024" height="1024" controls
+           style="margin-top:16px; border:1px solid #ccc; display:none"></video>
 
     <script>
         const promptEl = document.getElementById('prompt');
         const go = document.getElementById('go');
         const errorEl = document.getElementById('error');
         const canvas = document.getElementById('canvas');
+        const videoEl = document.getElementById('video');
         const ctx = canvas.getContext('2d');
 
         function drawImageFromUrl(url) {
+            canvas.style.display = 'block';
+            videoEl.style.display = 'none';
             const img = new Image();
             img.onload = () => {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -59,15 +64,51 @@
             };
             img.src = url;
         }
-        async function askReplicate() {
 
-            let options = {
-                prompt: promptEl.value
+        function showVideoFromUrl(url) {
+            canvas.style.display = 'none';
+            videoEl.style.display = 'block';
+            videoEl.src = url;
+            videoEl.play().catch(() => { });
+        }
+        async function askReplicate() {
+            const prompt = (promptEl.value || '').trim();
+            errorEl.textContent = '';
+            if (!prompt) {
+                errorEl.textContent = 'Please enter a prompt.';
+                return;
             }
-            const data = await window.replicateAPI.generate({ model: "bytedance/seedance-1-pro", prompt: promptEl.value });//in main.js
-            console.log("data", data);
-            const url = data.output[0];
-            if (url) drawImageFromUrl(url);
+
+            const previousBtnText = go.textContent;
+            go.disabled = true;
+            go.textContent = 'Generating...';
+            errorEl.textContent = 'Request submitted. Waiting for Replicate...';
+
+            try {
+                const data = await window.replicateAPI.generate({ model: "bytedance/seedance-1-pro", prompt }); // in main.js
+                console.log("data", data);
+                if (data?.error) {
+                    errorEl.textContent = `Error: ${data.error}`;
+                    return;
+                }
+                const url = data?.output && data.output[0];
+                if (!url) {
+                    errorEl.textContent = 'No output URL returned.';
+                    return;
+                }
+                const isVideo = /\.(mp4|webm|mov|m4v|avi)(\?.*)?$/i.test(url);
+                if (isVideo) {
+                    showVideoFromUrl(url);
+                } else {
+                    drawImageFromUrl(url);
+                }
+                errorEl.textContent = 'Done.';
+            } catch (e) {
+                errorEl.textContent = `Error: ${e?.message || String(e)}`;
+            } finally {
+                go.disabled = false;
+                go.textContent = previousBtnText;
+            }
         }
         go.addEventListener('click', askReplicate);
         promptEl.addEventListener('keydown', (e) => { if (e.key === 'Enter') askReplicate(); });
