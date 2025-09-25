@@ -47,9 +47,10 @@ init();
 function init() {
 
     let localInfo = localStorage.getItem("embeddings");
+    console.log("localInfo", localInfo);
     if (localInfo) {
-        //let allInfo = JSON.parse(localInfo);
-        //runUMAP(allInfo);
+        let allInfo = JSON.parse(localInfo);
+        runUMAP(allInfo);
     }
     else {
         console.log("no localembeddings");
@@ -147,7 +148,7 @@ async function createUniverse(universalMotto) {
 
     let allInfo = { embeddings: justEmbeddings, types: justTypes, descriptions: justDescriptions };
 
-    localStorage.setItem("embeddings", allInfo);
+    localStorage.setItem("embeddings", JSON.stringify(allInfo));
     runUMAP(allInfo)
     document.body.style.cursor = "default";
 }
