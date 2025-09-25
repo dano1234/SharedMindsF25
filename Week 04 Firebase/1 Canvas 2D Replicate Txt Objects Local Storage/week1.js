@@ -5,7 +5,7 @@ let inputLocationY = window.innerHeight / 2;
 let canvas;
 let ctx;
 let inputBox;
-const url = "https://replicate-api-proxy.glitch.me/create_n_get/";
+
 let responseWords = [];
 let promptWords = [];
 let mouseDown = false;
@@ -28,8 +28,8 @@ function init() {
 // Animate loop
 function animate() {
 
-    //inputBox.style.left = inputLocationX + 'px';
-    // inputBox.style.top = inputLocationY + 'px';
+    inputBox.style.left = inputLocationX + 'px';
+    inputBox.style.top = inputLocationY + 'px';
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < promptWords.length; i++) {
         let thisPromptWord = promptWords[i];
@@ -59,6 +59,8 @@ function animate() {
 
 
 async function askWord(promptWord, location) {
+    let replicateProxy = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
+    let authToken = "";
     let thisPromptWord = {
         word: promptWord,
         location: location,
@@ -68,14 +70,10 @@ async function askWord(promptWord, location) {
     let prompt = "a json list of 5 words related to " + promptWord + " with no extra words or punctuation";
     document.body.style.cursor = "progress";
     const data = {
-        //mistral "cf18decbf51c27fed6bbdc3492312c1c903222a56e3fe9ca02d6cbe5198afc10",
-        //llama  "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48"
-        //"version": "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48",
-        modelURL: "https://api.replicate.com/v1/models/meta/meta-llama-3-70b-instruct/predictions",
+
+        model: "openai/gpt-5-structured",
         input: {
             prompt: prompt,
-            max_tokens: 100,
-            max_length: 100,
         },
     };
     console.log("Making a Fetch Request", data);
@@ -84,15 +82,21 @@ async function askWord(promptWord, location) {
         headers: {
             "Content-Type": "application/json",
             Accept: 'application/json',
+            'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(data),
     };
-    const raw_response = await fetch(url, options);
+    const raw_response = await fetch(replicateProxy, options);
     //turn it into json
     const json_response = await raw_response.json();
     document.body.style.cursor = "auto";
-    let textResponse = json_response.output.join("").trim();
-    let textResponseJSON = JSON.parse(textResponse);
+
+    console.log("json_response", json_response.output);
+    let textResponseJSON = json_response.output.json_output;
+    console.log("textResponseJSON", textResponseJSON);
+
+    //let textResponse = json_response.output.join("").trim();
+    //let textResponseJSON = JSON.parse(textResponse);
     let angleIncrements = 2 * Math.PI / textResponseJSON.length;
     let radius = 100;
     for (let i = 0; i < textResponseJSON.length; i++) {
@@ -153,7 +157,7 @@ function initInterface() {
         if (event.key === 'Enter') {
             const inputValue = inputBox.value;
             askWord(inputValue, { x: inputLocationX, y: inputLocationY });
-            inputBox.style.display = 'none';
+            //  inputBox.style.display = 'none';
         }
     });
 
@@ -176,6 +180,10 @@ function initInterface() {
                 break;
             }
         }
+        if (currentWord == -1) {
+            inputLocationX = event.clientX;
+            inputLocationY = event.clientY;
+        }
     });
 
     document.addEventListener('mousemove', (event) => {
@@ -187,6 +195,9 @@ function initInterface() {
 
     });
     document.addEventListener('mouseup', (event) => {
+        if (currentWord != -1) {
+            localStorage.setItem('responseWords', JSON.stringify(responseWords));
+        }
         mouseDown = false
     });
 
