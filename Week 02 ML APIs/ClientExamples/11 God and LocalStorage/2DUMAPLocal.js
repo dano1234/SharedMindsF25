@@ -166,9 +166,25 @@ function placeSentence(sentence, fitting, type) {
     sentenceDiv.style.transform = "translate(-100%,-50%)";
     sentenceDiv.style.width = "100px";
     sentenceDiv.style.backgroundColor = "rgba(255,255,255,.5)";
+    sentenceDiv.style.fontSize = "10px"; // default smaller text
+    sentenceDiv.style.color = "#777"; // lighter grey
+    sentenceDiv.style.transition = "color 120ms ease, font-size 120ms ease";
+    sentenceDiv.style.zIndex = "1";
     sentenceDiv.innerHTML = sentence;
     document.body.append(sentenceDiv);
     sentenceDivs.push(sentenceDiv);
+
+    // Hover behavior: turn text red on mouse over
+    sentenceDiv.addEventListener('mouseenter', () => {
+        sentenceDiv.style.color = "red";
+        sentenceDiv.style.fontSize = "12px"; // slightly bigger on hover
+        sentenceDiv.style.zIndex = "100"; // lift above other labels
+    });
+    sentenceDiv.addEventListener('mouseleave', () => {
+        sentenceDiv.style.color = "#777";
+        sentenceDiv.style.fontSize = "10px";
+        sentenceDiv.style.zIndex = "1";
+    });
 }
 
 async function createUniverse(concept) {
@@ -205,7 +221,7 @@ async function createUniverse(concept) {
     const response = await fetch(replicateProxy, options);
     const response_json = await response.json()
     console.log("response_json", response_json);
-    const list = response_json.output.json_output;
+    let list = response_json.output.json_output;
     console.log("list", list);
     let justDescriptions = [];
     let justTypes = [];
@@ -249,14 +265,16 @@ async function createUniverse(concept) {
     let allInfo = localStorage.getItem("embeddings");
 
     // Merge with existing if requested
-    if (allInfo && allInfo.embeddings) {
+    if (allInfo) {
         let prev = JSON.parse(allInfo);
+        console.log("appending to existing embeddings");
         allInfo = {
             embeddings: prev.embeddings.concat(justEmbeddings),
             types: prev.types.concat(justTypes),
             descriptions: prev.descriptions.concat(justDescriptions),
         };
     } else {
+        console.log("all new embeddings");
         allInfo = {
             embeddings: justEmbeddings,
             types: justTypes,
@@ -280,7 +298,7 @@ function runUMAP(allInfo) {
     var myrng = new Math.seedrandom('hello.');
     let umap = new UMAP({
         nNeighbors: 6,
-        minDist: 0.1,
+        minDist: 0.9,
         nComponents: 2,
         random: myrng,  //special library seeded random so it is the same randome numbers every time
         spread: 0.99,
