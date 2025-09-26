@@ -31,30 +31,75 @@ function initFirebase() {
 function save() {
     let title = document.getElementById('title').value;
     let data = { title: title, objects: localObjects };
-    let folder = exampleName + "/" + title;
+    let folder = exampleName + "/";
     const dbRef = ref(db, folder + '/')
     set(dbRef, data);
 }
 
+
 function recall() {
     const ctx = canvas.getContext('2d');
     let title = document.getElementById('title').value;
-    let folder = exampleName + "/" + title + "/";
+    //let folder = exampleName + "/" + title + "/";
+    let folder = exampleName + "/";
+
     console.log("recalling from", folder);
     const dbRef = ref(db, folder);
     onValue(dbRef, (snapshot) => {
+
         console.log("here is a snapshot of everyting", snapshot.val());
+
         let data = snapshot.val();
+
         if (data) {
+
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let title = document.getElementById('title').value;
-            localObjects = data.objects;
-            for (let i = 0; i < localObjects.length; i++) {
-                console.log("drawing", localObjects[i]);
-                drawText(localObjects[i].position.x, localObjects[i].position.y, localObjects[i].text);
+            let title = document.getElementById('title').getBoundingClientRect();
+            const titleSelect = document.createElement('select');
+            titleSelect.setAttribute('id', 'titleSelect');
+            titleSelect.style.position = 'absolute';
+            titleSelect.style.left = (title.left - title.width) + 'px';
+            titleSelect.style.top = title.top + 12 + 'px';
+            titleSelect.style.transform = 'translate(-50%, -50%)';
+            titleSelect.style.zIndex = '100';
+            titleSelect.style.fontSize = '15px';
+            titleSelect.style.fontFamily = 'Arial';
+            document.body.appendChild(titleSelect);
+            localObjects = data;
+            //add the titles to the select element
+            let pickedTitle = null;
+            for (let key in data) {
+                const option = document.createElement('option');
+                option.setAttribute('value', key);
+                option.textContent = key;
+                titleSelect.appendChild(option);
+                if (pickedTitle == null) {
+                    pickedTitle = key;
+                }
             }
+            pickTitle(pickedTitle);
+
+            //add an event listener to the select element
+            titleSelect.addEventListener('change', function (event) {
+                const selectedTitle = event.target.value;
+                document.getElementById('title').value = selectedTitle;
+                console.log("selected title", selectedTitle);
+                pickTitle(selectedTitle);
+            });
+
         }
     });
+}
+
+function pickTitle(title) {
+    document.getElementById('title').value = title;
+    objects = localObjects[title].objects;
+    localObjects[title].objects = objects;
+    console.log("localObjects", localObjects);
+    for (let i = 0; i < objects.length; i++) {
+        console.log("drawing", objects[i]);
+        drawText(ojects[i].position.x, objects[i].position.y, objects[i].text);
+    }
 }
 
 function intitHTML() {
@@ -136,7 +181,9 @@ function intitHTML() {
             const y = inputBoxRect.top;
             // Add the text to the database
             const data = { type: 'text', position: { x: x, y: y }, text: inputValue };
-            localObjects.push(data);
+            localObjects[title].push(data);
+            localObjects[title].objects = objects;
+            console.log("localObjects", localObjects);
             drawText(x, y, inputValue);
 
             save();
