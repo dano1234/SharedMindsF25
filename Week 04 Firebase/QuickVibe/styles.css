@@ -1,0 +1,51 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    background: #0f1115;
+    color: #e6e6e6;
+}
+
+#stage {
+    position: fixed;
+    inset: 0;
+    cursor: crosshair;
+}
+
+.bubble {
+    position: absolute;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    max-width: 240px;
+    white-space: pre-wrap;
+    line-height: 1.3;
+    transform: translate(-2px, -2px);
+}
+
+#floating-input {
+    position: fixed;
+    display: none;
+    min-width: 260px;
+    padding: 10px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(20, 22, 28, 0.9);
+    color: #e6e6e6;
+    outline: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+#floating-input::placeholder {
+    color: #9aa0a6;
+}
+
+.pointer-none {
+    pointer-events: none;
+}
