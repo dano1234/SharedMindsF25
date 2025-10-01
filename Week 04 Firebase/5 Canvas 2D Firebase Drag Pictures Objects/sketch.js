@@ -329,6 +329,6 @@ function subscribeToData() {
             delete myObjectsByFirebaseKey[key];
         }
     });
-
+    //la la la
 
 }
