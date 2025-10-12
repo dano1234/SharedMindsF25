@@ -9,6 +9,7 @@ let thumbnailRects = [];
 let thumbnailShowAlterEgo = [];
 let centerImage = null;
 let centerLatents = null;
+let objectUrls = [];
 
 const GPUServer = "https://dano.ngrok.dev/";
 
@@ -20,6 +21,14 @@ function resize() {
 
 window.addEventListener('resize', resize);
 canvas.addEventListener('click', onCanvasClick);
+canvas.addEventListener('dragover', onCanvasDragOver);
+canvas.addEventListener('drop', onCanvasDrop);
+
+// Prevent browser from navigating on drop anywhere else
+window.addEventListener('dragover', preventWindowDrop);
+window.addEventListener('drop', preventWindowDrop);
+document.addEventListener('dragover', preventWindowDrop);
+document.addEventListener('drop', preventWindowDrop);
 
 function init() {
     let img = new Image()
@@ -61,6 +70,84 @@ async function getAlterEgos(which) {
 
     console.log('latents', which, latents[which]);
     draw();
+}
+
+function onCanvasDragOver(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer) e.dataTransfer.dropEffect = 'copy';
+}
+
+function replaceImageAtIndex(index, src, isObjectUrl) {
+    // Revoke previous object URL if any
+    if (objectUrls[index]) {
+        try { URL.revokeObjectURL(objectUrls[index]); } catch (err) { /* ignore */ }
+        objectUrls[index] = null;
+    }
+    const img = new Image();
+    // Helpful for remote URLs if CORS allows
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+        images[index] = img;
+        thumbnailShowAlterEgo[index] = false;
+        // Reset center render so interpolation uses updated inputs
+        centerImage = null;
+        centerLatents = null;
+        getAlterEgos(index);
+        draw();
+    };
+    img.onerror = () => {
+        console.warn('Failed to load dropped image');
+    };
+    if (isObjectUrl) {
+        objectUrls[index] = src;
+    }
+    img.src = src;
+}
+
+async function onCanvasDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    // Determine which thumbnail was targeted
+    let targetIndex = -1;
+    for (let i = 0; i < thumbnailRects.length; i++) {
+        const r = thumbnailRects[i];
+        if (!r) continue;
+        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
+            targetIndex = i;
+            break;
+        }
+    }
+    if (targetIndex === -1) return; // drop not on a thumbnail
+
+    const dt = e.dataTransfer;
+    if (!dt) return;
+
+    // Prefer file drop
+    if (dt.files && dt.files.length > 0) {
+        const file = dt.files[0];
+        if (!file.type || !file.type.startsWith('image/')) return;
+        const url = URL.createObjectURL(file);
+        replaceImageAtIndex(targetIndex, url, true);
+        return;
+    }
+
+    // Otherwise try URL drop (from browser)
+    const uriList = dt.getData('text/uri-list');
+    const text = dt.getData('text/plain');
+    const candidate = uriList || text;
+    if (candidate && /(\.png|\.jpe?g|\.webp|\.gif|\.bmp)$/i.test(candidate)) {
+        replaceImageAtIndex(targetIndex, candidate, false);
+    }
+}
+
+function preventWindowDrop(e) {
+    e.preventDefault();
+    e.stopPropagation();
 }
 
 function draw() {
