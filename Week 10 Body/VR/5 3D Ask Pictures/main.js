@@ -31,9 +31,10 @@ const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
 
 let exampleName = "SharedMindsExampleSequence2D";
 
+// Initialize in a safe order: create DOM (canvas) before using it in animate
+initHTML();
 init3D();
 initFirebaseDB();
-initHTML();
 subscribeToData();
 animate();
 
@@ -57,7 +58,14 @@ function init3D() {
     // let bgGeometery = new THREE.CylinderGeometry(725, 725, 1000, 10, 10, true)
     bgGeometery.scale(-1, 1, 1);
     // has to be power of 2 like (4096 x 2048) or(8192x4096).  i think it goes upside down because texture is not right size
-    let panotexture = new THREE.TextureLoader().load("itp.jpg");
+    // Load pano texture with basic error handling (won't crash if missing)
+    const loader = new THREE.TextureLoader();
+    let panotexture = loader.load(
+        "itp.jpg",
+        undefined,
+        undefined,
+        () => { console.warn('Could not load itp.jpg, continuing without background'); }
+    );
     // var material = new THREE.MeshBasicMaterial({ map: panotexture, transparent: true,   alphaTest: 0.02,opacity: 0.3});
     let backMaterial = new THREE.MeshBasicMaterial({ map: panotexture });
 
@@ -141,7 +149,8 @@ function animate() {
         }
     }
 
-    init3D();
+    // render 3D scene
+    renderer.render(scene, camera3D);
     requestAnimationFrame(animate);
 }
 
@@ -327,32 +336,24 @@ function subscribeToData() {
 
     });
 
-    onChildChanged(thisRef, (data) => {
-        callback("CHANGED", data.val(), data.key);
-        let key = data.key;
-        let thisObject = myObjectsByFirebaseKey[key];
-        if (thisObject) {
-            if (data.type === "text") {
-                thisObject.text = data.text;
-                thisObject.position = data.position;
-            } else if (data.type === "image") {
-                let img = new Image();  //create a new image
-                img.onload = function () {
-                    thisObject.img = img;
-                    thisObject.position = data.position;
-
-                }
-                img.src = data.imageURL;
-
-            }
+    onChildChanged(thisRef, (snapshot) => {
+        const key = snapshot.key;
+        const value = snapshot.val();
+        if (!key) return;
+        const existing = myObjectsByFirebaseKey[key] || {};
+        myObjectsByFirebaseKey[key] = { ...existing, ...value };
+        if (value && value.type === "image" && value.imageURL) {
+            const img = new Image();
+            img.onload = function () {
+                myObjectsByFirebaseKey[key].loadedImage = img;
+            };
+            img.src = value.imageURL;
         }
     });
-    onChildRemoved(thisRef, (data) => {
-        callback("removed", data.val(), data.key);
-        console.log("removed", data);
-        let thisObject = myObjectsByFirebaseKey[key];
-        if (thisObject) {
-
+    onChildRemoved(thisRef, (snapshot) => {
+        const key = snapshot.key;
+        console.log("removed", key);
+        if (key && myObjectsByFirebaseKey[key]) {
             delete myObjectsByFirebaseKey[key];
         }
     });
