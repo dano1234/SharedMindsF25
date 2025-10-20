@@ -26,8 +26,8 @@ let db;
 let existingSubscribedFolder = null;
 let mouseDown = false;
 
-const url = "https://replicate-api-proxy.glitch.me/create_n_get/";
 
+const url = "https://itp-ima-replicate-proxy.web.app/api/create_n_get";
 
 let exampleName = "SharedMindsExampleSequence2D";
 
@@ -158,7 +158,7 @@ async function askPictures(prompt, location) {
         //mistral "cf18decbf51c27fed6bbdc3492312c1c903222a56e3fe9ca02d6cbe5198afc10",
         //llama  "2d19859030ff705a87c746f7e96eea03aefb71f166725aee39692f1476566d48"
         //modelURL: "https://api.replicate.com/v1/models/meta/meta-llama-3-70b-instruct/predictions",
-        version: "ac732df83cea7fff18b8472768c88ad041fa750ff7682a21affe81863cbe77e4",   //stable diffusion
+        model: "black-forest-labs/flux-schnell",
         input: {
             prompt: prompt,
         },
