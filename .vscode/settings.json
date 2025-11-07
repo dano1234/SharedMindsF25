@@ -1,11 +1,12 @@
 {
-    "liveServer.settings.port": 5501,
-    "liveServer.settings.root": "/",
-    "liveServer.settings.CustomBrowser": "chrome",
-    "liveServer.settings.https": {
-        "enable": true,
-        "cert": "/Users/dbo3/Documents/certsForHTTP/localhost.pem",
-        "key": "/Users/dbo3/Documents/certsForHTTP/localhost.key",
-        "passphrase": "nsWDj3P-axYYBNwqZ@Kk"
-    }
+    "liveServer.settings.port": 5503
+    // "liveServer.settings.port": 5501,
+    // "liveServer.settings.root": "/",
+    // "liveServer.settings.CustomBrowser": "chrome",
+    // "liveServer.settings.https": {
+    //     "enable": true,
+    //     "cert": "/Users/dbo3/Documents/certsForHTTP/localhost.pem",
+    //     "key": "/Users/dbo3/Documents/certsForHTTP/localhost.key",
+    //     "passphrase": "nsWDj3P-axYYBNwqZ@Kk"
+    // }
 }
