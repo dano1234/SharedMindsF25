@@ -90,8 +90,7 @@ async function askPictures(promptWord, location) {
         height: 256
     }
     visualObjectsJSON.push(newObject);
-    localStorage.setItem('visualObjectsJSON', JSON.stringify(visualObjectsJSON));
-
+    saveJSONToLocalStorage();
 
     document.body.style.cursor = "auto";
     inputBoxDirectionX = 1;
@@ -101,9 +100,7 @@ async function askPictures(promptWord, location) {
 }
 
 
-document.addEventListener('beforeunload', () => {
-    saveJSONToLocalStorage();
-});
+
 
 function initInterface() {
     // Get the input box and the canvas element
@@ -177,7 +174,7 @@ function initInterface() {
     });
     document.addEventListener('mouseup', (event) => {
         mouseDown = false
-        localStorage.setItem('visualObjectsJSON', JSON.stringify(visualObjectsJSON));
+        saveJSONToLocalStorage();
 
     });
 
