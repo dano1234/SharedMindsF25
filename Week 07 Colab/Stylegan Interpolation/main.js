@@ -11,7 +11,7 @@ let centerImage = null;
 let centerLatents = null;
 let objectUrls = [];
 
-const GPUServer = "https://dano.ngrok.dev/";
+const GPUServer = "https://stylegan-navigation-image-api.loca.lt" ; //"https://dano.ngrok.dev/";
 
 function resize() {
     canvas.width = window.innerWidth;
