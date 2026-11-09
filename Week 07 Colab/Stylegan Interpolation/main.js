@@ -202,13 +202,12 @@ async function onCanvasClick(e) {
     }
     if (!clickedOnThumbnail) {
 
-        if (e.shiftKey) {
-            let factor = y / canvas.height * 10 - 5
-            console.log('traveling along named dimension', factor, 'age', latents[0]);
-            let sendLatents = latents[0];
-            if (centerLatents) sendLatents = centerLatents;
-            console.log(latents[0], centerLatents);
-            const result = await travelAlongNamedDimension(sendLatents, 'age', factor);
+        if (e.shiftKey || e.altKey) {
+            const dimension = e.altKey ? 'smile' : 'age';
+            let factor = y / canvas.height * 10 - 5;
+            let sendLatents = centerLatents || latents[0];
+            console.log('traveling along named dimension', dimension, factor);
+            const result = await travelAlongNamedDimension(sendLatents, dimension, factor);
             console.log('between named dimension result', result);
             centerImage = new Image();
             centerImage.src = result.b64Image;
