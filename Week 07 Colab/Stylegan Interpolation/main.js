@@ -262,8 +262,6 @@ async function imageFromLatents(v1, v2, percent) {
             "Content-Type": "application/json",
             'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
         },
-        'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
-
         method: "POST",
         body: JSON.stringify(postData)
     };
