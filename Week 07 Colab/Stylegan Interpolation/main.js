@@ -12,7 +12,7 @@ let centerLatents = null;
 let objectUrls = [];
 
 //const GPUServer = "https://stylegan-navigation-image-api.loca.lt/" ; //"https://dano.ngrok.dev/";
-const GPUServer = "https://stylegan-navigation-image-api.loca.lt/"; 
+const GPUServer = "https://stylegan-navigation-image-api.loca.lt/";
 
 function resize() {
     canvas.width = window.innerWidth;
@@ -241,7 +241,10 @@ async function latentsFromImage(imgBase64) {
     const postData = { image: imgBase64 };
     const url = GPUServer + "locateImage/";
     const options = {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
+        },
         method: "POST",
         body: JSON.stringify(postData)
     };
@@ -255,7 +258,12 @@ async function imageFromLatents(v1, v2, percent) {
     const postData = { v1, v2, percent };
     const url = GPUServer + "getBetween/";
     const options = {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
+        },
+        'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
+
         method: "POST",
         body: JSON.stringify(postData)
     };
@@ -269,7 +277,10 @@ async function travelAlongNamedDimension(anchor, namedDimension, percent) {
     const postData = { latents: anchor, direction: namedDimension, factor: percent };
     const url = GPUServer + "latentsToImage/";
     const options = {
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            'bypass-tunnel-reminder': 'true' // Automatically bypasses the localtunnel page
+        },
         method: "POST",
         body: JSON.stringify(postData)
     };
